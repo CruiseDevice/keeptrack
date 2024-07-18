@@ -1,10 +1,13 @@
 import React from "react";
-import PropTypes from 'prop-types';
 import {Project} from './Project';
 import ProjectCard from "./ProjectCard";
 import ProjectForm from './ProjectForm';
 
-function ProjectList ({projects}) {
+interface ProjectListProps {
+  projects: Project[];
+}
+
+function ProjectList ({projects}: ProjectListProps) {
   const items = projects.map(project => (
     <div key={project.id} className="cols-sm">
         <ProjectCard key={project.id} project={project}/>
@@ -14,9 +17,5 @@ function ProjectList ({projects}) {
   ));
   return <div className="row">{items}</div>
 }
-
-ProjectList.propTypes = {
-  projects: PropTypes.arrayOf(PropTypes.instanceOf(Project)).isRequired
-};
 
 export default ProjectList;

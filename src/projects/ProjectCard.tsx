@@ -1,11 +1,14 @@
 import React from "react";
-import PropTypes from 'prop-types';
 import { Project } from "./Project";
 
-function ProjectCard(props) {
+interface ProjectCardProps {
+  project: Project;
+}
+
+function ProjectCard(props: ProjectCardProps) {
   const {project} = props;
 
-  const handleEditClick = (project) => {
+  const handleEditClick = (project: Project) => {
     console.log(project);
   }
 
@@ -33,8 +36,5 @@ function ProjectCard(props) {
   )
 }
 
-ProjectCard.propTypes = {
-  project: PropTypes.instanceOf(Project).isRequired,
-}
 
 export default ProjectCard;
