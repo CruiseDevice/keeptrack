@@ -3,13 +3,14 @@ import { Project } from "./Project";
 
 interface ProjectCardProps {
   project: Project;
+  onEdit: (project: Project) => void;
 }
 
 function ProjectCard(props: ProjectCardProps) {
-  const {project} = props;
+  const {project, onEdit} = props;
 
   const handleEditClick = (project: Project) => {
-    console.log(project);
+    onEdit(project);
   }
 
   return (
