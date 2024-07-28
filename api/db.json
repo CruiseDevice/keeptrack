@@ -532,13 +532,13 @@
     },
     {
       "id": 54,
-      "name": "Anderson LLC",
-      "description": "Diverse incremental algorithm. Expedita laudantium sit quisquam sit nobis eum nam ea natus.",
+      "name": "Anderson LLCPCP",
+      "description": "very well",
       "imageUrl": "/assets/placeimg_500_300_arch10.jpg",
       "contractTypeId": 2,
       "contractSignedOn": "2015-01-21T07:03:49.836Z",
-      "budget": 74221,
-      "isActive": false
+      "budget": 74,
+      "isActive": true
     },
     {
       "id": 55,
@@ -762,12 +762,12 @@
     },
     {
       "id": 77,
-      "name": "Abshire and Sons",
-      "description": "Ergonomic mission-critical knowledge user. Consequatur pariatur eos molestiae qui aut dolorem laudantium nesciunt doloribus.",
+      "name": "qwd",
+      "description": "asd",
       "imageUrl": "/assets/placeimg_500_300_arch6.jpg",
       "contractTypeId": 6,
       "contractSignedOn": "2018-08-16T18:49:06.477Z",
-      "budget": 98123,
+      "budget": 23,
       "isActive": true
     },
     {
