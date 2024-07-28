@@ -12,7 +12,6 @@ function ProjectList ({projects, onSave}: ProjectListProps) {
   const [projectBeingEdited, setProjectBeingEdited] = useState({});
 
   const handleEdit = (project: Project) => {
-    console.log(project);
     setProjectBeingEdited(project)
   }
   
