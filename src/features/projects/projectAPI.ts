@@ -5,9 +5,9 @@ import {
   hasFlag,
   setFlag,
   clearItems
-} from "../shared/utils/storage";
-import { createOptimisticUpdateFromConstructor } from "../shared/utils/optimistic";
-import { HttpErrorInfo } from "../shared/types";
+} from "../../shared/utils/storage";
+import { createOptimisticUpdateFromConstructor } from "../../shared/utils/optimistic";
+import { HttpErrorInfo } from "../../shared/types";
 
 // Use environment variable with fallback to localhost for development
 const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:4000';

@@ -1,8 +1,8 @@
 import './App.css';
-import ProjectsPage from './projects/ProjectsPage';
+import ProjectsPage from './features/projects/ProjectsPage';
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
 import HomePage from './home/HomePage';
-import ProjectPage from './projects/ProjectPage';
+import ProjectPage from './features/projects/ProjectPage';
 import { ErrorBoundary } from './shared/components';
 
 function App() {
