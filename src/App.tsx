@@ -3,7 +3,7 @@ import ProjectsPage from './projects/ProjectsPage';
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
 import HomePage from './home/HomePage';
 import ProjectPage from './projects/ProjectPage';
-import ErrorBoundary from './ErrorBoundary';
+import { ErrorBoundary } from './shared/components';
 
 function App() {
   return (
