@@ -15,3 +15,7 @@ export { projectAPI } from './projectAPI';
 // Models - Domain types
 export { Project } from './Project';
 export type { ProjectStatus } from './Project';
+
+// Hooks - Custom React hooks for state management
+export { useProjects, useProject } from './hooks';
+export type { UseProjectsResult, UseProjectResult } from './hooks';
