@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import ProjectList from './ProjectList';
+import KanbanBoard from './KanbanBoard';
 import { Project } from './Project';
 import { projectAPI } from './projectAPI';
 
@@ -25,7 +25,7 @@ function ProjectsPage () {
     loadProjects();
   }, [])
 
-  const saveProject = (project: Project) => {
+  const saveProject = (project: Project, previousProject?: Project) => {
     projectAPI.put(project)
       .then((updatedProject) => {
         let updatedProjects = projects.map((p: Project) => {
@@ -36,6 +36,13 @@ function ProjectsPage () {
       .catch((e) => {
         if (e instanceof Error) {
           setError(e.message);
+          // Rollback state on error for drag operations
+          if (previousProject) {
+            let rolledBackProjects = projects.map((p: Project) => {
+              return p.id === project.id ? previousProject : p;
+            });
+            setProjects(rolledBackProjects);
+          }
         }
       });
   };
@@ -56,7 +63,7 @@ function ProjectsPage () {
         </div>
       )}
 
-      <ProjectList 
+      <KanbanBoard
         projects={projects}
         onSave={saveProject}/>
 

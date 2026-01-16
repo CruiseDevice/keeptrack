@@ -1,7 +1,82 @@
+/* ========================================
+   Global Layout
+   ======================================== */
+
 header {
     height: 5.1875rem;
 }
 
 a.button.active {
-    border: 1px 
+    border: 1px;
+}
+
+/* ========================================
+   Kanban Board Global Overrides
+   Ensures proper integration with app layout
+   ======================================== */
+
+/* Prevent horizontal scroll on body when Kanban board is present */
+body:has(.kanban-board) {
+    overflow-x: hidden;
+}
+
+/* Smooth scrolling for the entire app */
+html {
+    scroll-behavior: smooth;
+}
+
+/* ========================================
+   Drag-and-Drop Global Styles
+   Applied during drag operations across the app
+   ======================================== */
+
+/* Prevent text selection during drag operations */
+body:has(.kanban-card.dragging) {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* Global drag-and-drop cursor feedback */
+body.dragging {
+    cursor: grabbing;
+}
+
+/* Hide default drag preview for cleaner appearance */
+.kanban-card {
+    -webkit-user-drag: element;
+}
+
+/* ========================================
+   Focus Management
+   Ensures consistent focus ring styling
+   ======================================== */
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    .kanban-card,
+    .kanban-card:hover,
+    .kanban-column-count,
+    .kanban-card-edit {
+        transition: none;
+    }
+}
+
+/* ========================================
+   Print Optimization
+   Improves Kanban board printing
+   ======================================== */
+
+@media print {
+    header,
+    nav {
+        position: static;
+    }
+
+    .kanban-board {
+        background: white;
+    }
 }

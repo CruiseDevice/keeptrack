@@ -1,4 +1,4 @@
-import { Project } from "./Project";
+import { Project, ProjectStatus } from "./Project";
 
 const baseUrl = 'http://localhost:4000';
 const url = `${baseUrl}/projects`;
@@ -13,6 +13,16 @@ function translateStatusToErrorMessage(status: number) {
     default:
       return 'There was an error retrieving the project(s). Please try again.';
   }
+}
+
+/**
+ * Validates that the status is a valid ProjectStatus value
+ * @param status - The status value to validate
+ * @returns true if valid, false otherwise
+ */
+function isValidStatus(status: any): status is ProjectStatus {
+  const validStatuses: ProjectStatus[] = ['backlog', 'todo', 'in-progress', 'review', 'done', 'blocked'];
+  return validStatuses.includes(status);
 }
 
 function checkStatus(response: any) {
@@ -63,11 +73,43 @@ const projectAPI = {
         );
       });
   },
+
+  /**
+   * Creates an optimistic update for a project.
+   * This returns the updated project immediately without waiting for the API.
+   * Used for drag-and-drop operations where UI needs to update instantly.
+   * 
+   * @param project - The original project
+   * @param updates - Partial updates to apply (e.g., status change)
+   * @returns A new Project instance with the updates applied
+   */
+  createOptimisticUpdate(project: Project, updates: Partial<Project>): Project {
+    return new Project({
+      ...project,
+      ...updates
+    });
+  },
   
   put(project: Project) {
+    // Validate status field before sending to API
+    if (project.status && !isValidStatus(project.status)) {
+      const error = new Error(`Invalid status value: "${project.status}". Valid values are: backlog, todo, in-progress, review, done, blocked.`);
+      console.error('Status validation error:', error.message);
+      throw error;
+    }
+
+    // Verify Date serialization for contractSignedOn
+    const projectBody = JSON.stringify(project, (key, value) => {
+      // Convert Date objects to ISO strings for proper serialization
+      if (key === 'contractSignedOn' && value instanceof Date) {
+        return value.toISOString();
+      }
+      return value;
+    });
+
     return fetch(`${url}/${project.id}`, {
       method: 'PUT',
-      body: JSON.stringify(project),
+      body: projectBody,
       headers: {
         'Content-Type': 'application/json'
       }

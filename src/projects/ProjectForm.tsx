@@ -1,5 +1,5 @@
 import React, { SyntheticEvent, useState } from "react";
-import { Project } from "./Project";
+import { Project, ProjectStatus } from "./Project";
 
 interface ProjectFormProps {
   project: Project;
@@ -13,14 +13,16 @@ function ProjectForm({project: initialProject, onCancel, onSave}: ProjectFormPro
   const [errors, setErrors] = useState({
     name: '',
     description: '',
-    budget: ''
+    budget: '',
+    status: ''
   });
 
   function isValid() {
     return (
       errors.name.length === 0 &&
       errors.description.length === 0 &&
-      errors.budget.length === 0
+      errors.budget.length === 0 &&
+      errors.status.length === 0
     );
   }  
 
@@ -57,7 +59,8 @@ function ProjectForm({project: initialProject, onCancel, onSave}: ProjectFormPro
     let errors: any = {
       name: '',
       description: '',
-      budget: ''
+      budget: '',
+      status: ''
     };
 
     if (project.name.length > 0 && project.name.length < 3) {
@@ -70,6 +73,10 @@ function ProjectForm({project: initialProject, onCancel, onSave}: ProjectFormPro
 
     if (project.budget === 0) {
       errors.budget = 'Budget must be more than $0';
+    }
+
+    if (!project.status) {
+      errors.status = 'Status is required';
     }
 
     return errors;
@@ -123,7 +130,26 @@ function ProjectForm({project: initialProject, onCancel, onSave}: ProjectFormPro
             </div>
           )
         }
-        
+
+        <label htmlFor="status">Status</label>
+        <select
+          name="status"
+          value={project.status}
+          onChange={handleChange}>
+          <option value="backlog">Backlog</option>
+          <option value="todo">To Do</option>
+          <option value="in-progress">In Progress</option>
+          <option value="review">Review</option>
+          <option value="done">Done</option>
+          <option value="blocked">Blocked</option>
+        </select>
+        {
+          errors.status.length > 0 && (
+            <div className='card error'>
+              <p>{errors.status}</p>
+            </div>
+          )
+        }
 
         <label htmlFor="isActive">Active?</label>
         <input 

@@ -53,7 +53,7 @@
       "contractSignedOn": "2016-11-14T19:19:53.624Z",
       "budget": 31350,
       "isActive": true,
-      "status": "blocked"
+      "status": "review"
     },
     {
       "id": 6,
@@ -86,7 +86,7 @@
       "contractSignedOn": "2011-10-16T08:07:32.217Z",
       "budget": 21205,
       "isActive": true,
-      "status": "done"
+      "status": "blocked"
     },
     {
       "id": 9,
@@ -350,7 +350,7 @@
       "contractSignedOn": "2018-01-24T18:59:39.035Z",
       "budget": 80065,
       "isActive": true,
-      "status": "done"
+      "status": "blocked"
     },
     {
       "id": 33,
@@ -592,7 +592,7 @@
       "contractSignedOn": "2015-01-21T07:03:49.836Z",
       "budget": 74,
       "isActive": true,
-      "status": "todo"
+      "status": "in-progress"
     },
     {
       "id": 55,
@@ -636,7 +636,7 @@
       "contractSignedOn": "2018-02-04T07:32:10.000Z",
       "budget": 28740,
       "isActive": true,
-      "status": "blocked"
+      "status": "done"
     },
     {
       "id": 59,
