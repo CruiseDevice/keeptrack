@@ -1,7 +1,10 @@
 import { Project, ProjectStatus } from "./Project";
 
-const baseUrl = 'http://localhost:4000';
+// Use environment variable with fallback to localhost for development
+const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:4000';
 const url = `${baseUrl}/projects`;
+const LOCAL_STORAGE_KEY = 'keeptrack_projects';
+const SEED_DATA_KEY = 'keeptrack_seeded';
 
 
 function translateStatusToErrorMessage(status: number) {
@@ -60,12 +63,81 @@ function convertToProjectModel(item: any): Project {
   return new Project(item);
 }
 
+// ============ LocalStorage Helper Functions ============
+
+/**
+ * Save projects to localStorage
+ */
+function saveToLocalStorage(projects: Project[]): void {
+  try {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(projects));
+  } catch (error) {
+    console.error('Failed to save to localStorage:', error);
+  }
+}
+
+/**
+ * Load projects from localStorage
+ * @returns Array of projects or null if not found
+ */
+function loadFromLocalStorage(): Project[] | null {
+  try {
+    const data = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (data) {
+      const parsed = JSON.parse(data);
+      return Array.isArray(parsed) ? parsed.map(convertToProjectModel) : null;
+    }
+  } catch (error) {
+    console.error('Failed to load from localStorage:', error);
+  }
+  return null;
+}
+
+/**
+ * Check if app has been seeded with initial data
+ */
+function isSeeded(): boolean {
+  return localStorage.getItem(SEED_DATA_KEY) === 'true';
+}
+
+/**
+ * Mark app as seeded
+ */
+function markAsSeeded(): void {
+  localStorage.setItem(SEED_DATA_KEY, 'true');
+}
+
+/**
+ * Clear all localStorage data (useful for testing/reset)
+ */
+export function clearLocalStorage(): void {
+  localStorage.removeItem(LOCAL_STORAGE_KEY);
+  localStorage.removeItem(SEED_DATA_KEY);
+}
+
 const projectAPI = {
   get() {
+    // First, try to load from localStorage
+    const cachedProjects = loadFromLocalStorage();
+    if (cachedProjects) {
+      console.log('Loading projects from localStorage:', cachedProjects.length);
+      // Return cached data immediately, then sync with API in background
+      return Promise.resolve(cachedProjects);
+    }
+
+    // No cache found, fetch from API
     return fetch(`${url}?_sort=name`)
       .then(checkStatus)
       .then(parseJSON)
-      .then(convertToProjectModels)
+      .then((projects) => {
+        // Seed localStorage on first successful fetch
+        const projectModels = convertToProjectModels(projects);
+        if (!isSeeded()) {
+          saveToLocalStorage(projectModels);
+          markAsSeeded();
+        }
+        return projectModels;
+      })
       .catch((error: TypeError) => {
         console.log('log client error ' + error);
         throw new Error(
@@ -96,6 +168,15 @@ const projectAPI = {
       const error = new Error(`Invalid status value: "${project.status}". Valid values are: backlog, todo, in-progress, review, done, blocked.`);
       console.error('Status validation error:', error.message);
       throw error;
+    }
+
+    // Optimistic update: save to localStorage immediately
+    const cachedProjects = loadFromLocalStorage();
+    if (cachedProjects) {
+      const updatedCache = cachedProjects.map(p =>
+        p.id === project.id ? project : p
+      );
+      saveToLocalStorage(updatedCache);
     }
 
     // Verify Date serialization for contractSignedOn
