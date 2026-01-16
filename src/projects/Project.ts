@@ -1,3 +1,12 @@
+export type ProjectStatus = 
+    | 'backlog'
+    | 'todo'
+    | 'in-progress'
+    | 'review'
+    | 'done'
+    | 'blocked';
+
+
 export class Project {
     id: number | undefined;
     name: string = '';
@@ -7,6 +16,7 @@ export class Project {
     contractSignedOn: Date = new Date();    
     budget: number = 0;
     isActive: boolean = false;
+    status: ProjectStatus = 'backlog';
     
     constructor(initializer?: any) {
         if(!initializer) return;
@@ -20,5 +30,6 @@ export class Project {
             this.contractSignedOn = initializer.contractSignedOn;
         if(initializer.budget) this.budget = initializer.budget;
         if(initializer.isActive) this.isActive = initializer.isActive;
+        if(initializer?.status) this.status = initializer.status;
     }
 }
