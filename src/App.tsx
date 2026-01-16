@@ -1,7 +1,7 @@
 import './App.css';
 import ProjectsPage from './features/projects/ProjectsPage';
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
-import HomePage from './home/HomePage';
+import HomePage from './features/home/HomePage';
 import ProjectPage from './features/projects/ProjectPage';
 import { ErrorBoundary } from './shared/components';
 
