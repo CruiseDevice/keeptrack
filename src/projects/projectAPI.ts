@@ -1,4 +1,13 @@
 import { Project, ProjectStatus } from "./Project";
+import {
+  saveToLocalStorage as sharedSaveToStorage,
+  loadFromLocalStorage as sharedLoadFromStorage,
+  hasFlag,
+  setFlag,
+  clearItems
+} from "../shared/utils/storage";
+import { createOptimisticUpdateFromConstructor } from "../shared/utils/optimistic";
+import { HttpErrorInfo } from "../shared/types";
 
 // Use environment variable with fallback to localhost for development
 const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:4000';
@@ -32,7 +41,7 @@ function checkStatus(response: any) {
   if (response.ok) {
     return response
   } else {
-    const httpErrorInfo = {
+    const httpErrorInfo: HttpErrorInfo = {
       status: response.status,
       statusText: response.statusText,
       url: response.url,
@@ -64,16 +73,13 @@ function convertToProjectModel(item: any): Project {
 }
 
 // ============ LocalStorage Helper Functions ============
+// Using shared storage utilities from shared/utils/storage.ts
 
 /**
  * Save projects to localStorage
  */
 function saveToLocalStorage(projects: Project[]): void {
-  try {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(projects));
-  } catch (error) {
-    console.error('Failed to save to localStorage:', error);
-  }
+  sharedSaveToStorage(LOCAL_STORAGE_KEY, projects);
 }
 
 /**
@@ -81,38 +87,29 @@ function saveToLocalStorage(projects: Project[]): void {
  * @returns Array of projects or null if not found
  */
 function loadFromLocalStorage(): Project[] | null {
-  try {
-    const data = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (data) {
-      const parsed = JSON.parse(data);
-      return Array.isArray(parsed) ? parsed.map(convertToProjectModel) : null;
-    }
-  } catch (error) {
-    console.error('Failed to load from localStorage:', error);
-  }
-  return null;
+  const data = sharedLoadFromStorage<any[]>(LOCAL_STORAGE_KEY);
+  return data ? data.map(convertToProjectModel) : null;
 }
 
 /**
  * Check if app has been seeded with initial data
  */
 function isSeeded(): boolean {
-  return localStorage.getItem(SEED_DATA_KEY) === 'true';
+  return hasFlag(SEED_DATA_KEY);
 }
 
 /**
  * Mark app as seeded
  */
 function markAsSeeded(): void {
-  localStorage.setItem(SEED_DATA_KEY, 'true');
+  setFlag(SEED_DATA_KEY, true);
 }
 
 /**
  * Clear all localStorage data (useful for testing/reset)
  */
 export function clearLocalStorage(): void {
-  localStorage.removeItem(LOCAL_STORAGE_KEY);
-  localStorage.removeItem(SEED_DATA_KEY);
+  clearItems(LOCAL_STORAGE_KEY, SEED_DATA_KEY);
 }
 
 const projectAPI = {
@@ -150,16 +147,15 @@ const projectAPI = {
    * Creates an optimistic update for a project.
    * This returns the updated project immediately without waiting for the API.
    * Used for drag-and-drop operations where UI needs to update instantly.
-   * 
+   *
+   * Uses shared optimistic update utility from shared/utils/optimistic.ts
+   *
    * @param project - The original project
    * @param updates - Partial updates to apply (e.g., status change)
    * @returns A new Project instance with the updates applied
    */
   createOptimisticUpdate(project: Project, updates: Partial<Project>): Project {
-    return new Project({
-      ...project,
-      ...updates
-    });
+    return createOptimisticUpdateFromConstructor(Project, project, updates);
   },
   
   put(project: Project) {
