@@ -1,0 +1,121 @@
+.error-boundary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.error-boundary__content {
+  max-width: 600px;
+  width: 100%;
+  padding: 2.5rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.error-boundary__icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.error-boundary__title {
+  margin: 0 0 1rem 0;
+  font-size: 1.75rem;
+  color: #333;
+}
+
+.error-boundary__message {
+  margin: 0 0 1.5rem 0;
+  color: #666;
+  line-height: 1.6;
+}
+
+.error-boundary__details {
+  margin: 1.5rem 0;
+  text-align: left;
+}
+
+.error-boundary__summary {
+  cursor: pointer;
+  padding: 0.5rem;
+  background: #f5f5f5;
+  border-radius: 4px;
+  font-weight: 500;
+  color: #667eea;
+  user-select: none;
+}
+
+.error-boundary__summary:hover {
+  background: #e9e9e9;
+}
+
+.error-boundary__error-info {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #2d2d2d;
+  border-radius: 4px;
+  color: #f8f8f2;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.875rem;
+  overflow-x: auto;
+}
+
+.error-boundary__error-info h4 {
+  margin: 0 0 0.5rem 0;
+  color: #ff6b6b;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.error-boundary__stack {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #a6e22e;
+}
+
+.error-boundary__actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.error-boundary__button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.error-boundary__button--primary {
+  background: #667eea;
+  color: white;
+}
+
+.error-boundary__button--primary:hover {
+  background: #5568d3;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.error-boundary__button--secondary {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.error-boundary__button--secondary:hover {
+  background: #d1d5db;
+}
+
+.error-boundary__button:active {
+  transform: translateY(0);
+}
