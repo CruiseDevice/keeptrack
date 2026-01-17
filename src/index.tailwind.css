@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom base styles that Tailwind doesn't cover */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-bg-secondary text-text-primary antialiased;
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
