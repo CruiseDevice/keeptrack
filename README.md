@@ -6,6 +6,8 @@ A modern project management application featuring an interactive Kanban board fo
 
 ### Core Functionality
 - **Kanban Board**: Interactive drag-and-drop interface to manage projects across different status columns
+- **Virtualized Columns**: Efficient rendering of large project lists using react-virtuoso
+- **Inline Editing**: Edit projects directly via modal without leaving the Kanban board
 - **Project Management**: Create, read, update, and delete projects with comprehensive details
 - **Status Workflow**: Track projects through six distinct stages: Backlog, To Do, In Progress, Review, Done, and Blocked
 - **Project Details**: View and edit project information including name, description, budget, contract details, and status
@@ -27,7 +29,8 @@ Projects can be moved between the following status columns:
 - **TypeScript 4.9**: Type-safe development
 - **React Router 6.3**: Client-side routing
 - **@hello-pangea/dnd 18.0**: Drag-and-drop functionality for Kanban board
-- **mini.css 3.0**: Lightweight CSS framework
+- **react-virtuoso 4.18**: Virtual scrolling for efficient rendering of large lists
+- **Tailwind CSS 3.4**: Utility-first CSS framework with custom design tokens
 
 ### Backend
 - **json-server 0.16**: REST API mock server
@@ -49,26 +52,38 @@ keeptrack/
 │   ├── assets/              # Static assets (images, logos)
 │   └── index.html           # HTML template
 ├── src/
-│   ├── home/
-│   │   └── HomePage.tsx      # Home page component
-│   ├── projects/
-│   │   ├── KanbanBoard.tsx  # Main Kanban board component
-│   │   ├── KanbanBoard.css  # Kanban board styles
-│   │   ├── KanbanCard.tsx   # Individual project card component
-│   │   ├── KanbanColumn.tsx # Single Kanban column component
-│   │   ├── Project.ts       # Project model with status types
-│   │   ├── ProjectCard.tsx  # Project card for list view
-│   │   ├── ProjectDetail.tsx # Project detail view
-│   │   ├── ProjectForm.tsx  # Project creation/edit form
-│   │   ├── ProjectList.tsx  # Project list view
-│   │   ├── ProjectPage.tsx  # Individual project page
-│   │   ├── ProjectsPage.tsx # Main projects page with Kanban
-│   │   ├── MockProjects.ts  # Mock project data
-│   │   └── projectAPI.ts    # API service layer
+│   ├── features/
+│   │   ├── home/
+│   │   │   ├── index.ts     # Home page exports
+│   │   │   └── HomePage.tsx # Home page component
+│   │   └── projects/
+│   │       ├── index.ts     # Projects feature exports
+│   │       ├── KanbanBoard.tsx       # Main Kanban board component
+│   │       ├── KanbanCard.tsx        # Individual project card component
+│   │       ├── KanbanColumn.tsx      # Single Kanban column component
+│   │       ├── VirtualizedKanbanColumn.tsx # Virtualized column for large lists
+│   │       ├── Project.ts            # Project model with status types
+│   │       ├── ProjectDetail.tsx     # Project detail view
+│   │       ├── ProjectForm.tsx       # Project creation/edit form
+│   │       ├── ProjectPage.tsx       # Individual project page
+│   │       ├── ProjectsPage.tsx      # Main projects page with Kanban
+│   │       ├── MockProjects.ts       # Mock project data
+│   │       ├── projectAPI.ts         # API service layer
+│   │       └── *.test.tsx    # Component test files
+│   ├── shared/
+│   │   └── components/
+│   │       ├── ErrorBoundary/
+│   │       │   └── ErrorBoundary.tsx # Error handling component
+│   │       ├── LoadingSpinner/
+│   │       │   └── LoadingSpinner.tsx # Loading indicator component
+│   │       └── Modal/
+│   │           └── Modal.tsx         # Reusable modal component
 │   ├── App.tsx              # Main app component with routing
-│   ├── App.css              # Global styles
+│   ├── index.tailwind.css   # Tailwind CSS entry point + custom styles
 │   ├── index.tsx            # Application entry point
-│   └── index.css            # Global CSS
+│   └── index.css            # Minimal global CSS
+├── tailwind.config.js       # Tailwind CSS configuration
+├── TAILWIND_MIGRATION_PLAN.md  # Tailwind migration documentation
 ├── package.json             # Dependencies and scripts
 ├── tsconfig.json            # TypeScript configuration
 └── README.md               # This file
@@ -208,44 +223,47 @@ npm test
 ```
 
 ### Test Files
-- [`KanbanBoard.test.tsx`](src/projects/KanbanBoard.test.tsx:1) - Kanban board component tests
-- [`KanbanCard.test.tsx`](src/projects/KanbanCard.test.tsx:1) - Kanban card component tests
-- [`KanbanColumn.test.tsx`](src/projects/KanbanColumn.test.tsx:1) - Kanban column component tests
-- [`Project.test.ts`](src/projects/Project.test.ts:1) - Project model tests
+- [`KanbanBoard.test.tsx`](src/features/projects/KanbanBoard.test.tsx:1) - Kanban board component tests
+- [`KanbanCard.test.tsx`](src/features/projects/KanbanCard.test.tsx:1) - Kanban card component tests
+- [`KanbanColumn.test.tsx`](src/features/projects/KanbanColumn.test.tsx:1) - Kanban column component tests
 
 ## Development Notes
 
 ### Adding New Features
-- Follow the existing component structure in [`src/projects/`](src/projects/)
+- Follow the existing component structure in [`src/features/`](src/features/)
 - Use TypeScript for type safety
 - Add tests for new components
-- Update the API service layer in [`projectAPI.ts`](src/projects/projectAPI.ts:1) if needed
+- Update the API service layer in [`projectAPI.ts`](src/features/projects/projectAPI.ts:1) if needed
+- Use Tailwind utility classes for styling
 
 ### Styling
-- The project uses mini.css as a base framework
-- Custom styles are defined in component-specific CSS files
-- Kanban board styles are in [`KanbanBoard.css`](src/projects/KanbanBoard.css:1)
-- Global styles are in [`App.css`](src/App.css:1)
+- The project uses **Tailwind CSS 3.4** as the primary styling framework
+- Custom design tokens are defined in [`tailwind.config.js`](tailwind.config.js:1)
+- Tailwind entry point with custom styles is in [`index.tailwind.css`](src/index.tailwind.css:1)
+- Global styles are minimal and defined in [`index.css`](src/index.css:1)
+- Features include:
+  - Custom color palette with primary, neutral, and semantic colors
+  - Custom shadow utilities for depth
+  - Custom transition durations for consistent animations
+  - Responsive breakpoints including mobile-first utilities
 
 ### Status Color Scheme
-The Kanban board uses the following color coding for status columns:
-- **Backlog**: Gray (#6c757d)
-- **To Do**: Blue (#007bff)
-- **In Progress**: Yellow (#ffc107)
-- **Review**: Purple (#6f42c1)
-- **Done**: Green (#28a745)
-- **Blocked**: Red (#dc3545)
+The Kanban board uses the following color coding for status columns (defined in Tailwind config):
+- **Backlog**: Gray (`text-text-secondary`)
+- **To Do**: Blue (`text-info`)
+- **In Progress**: Yellow/Amber (`text-warning`)
+- **Review**: Purple (`text-purple`)
+- **Done**: Green (`text-success`)
+- **Blocked**: Red (`text-error`)
 
 ## Known Issues & Limitations
 
 - The json-server API stores data in memory; changes are lost when the server restarts
-- Pagination is not currently implemented on the Kanban board
 - Mobile touch support for drag-and-drop may have limitations
 
 ## Future Enhancements
 
 Potential features for future development:
-- Per-column pagination or virtual scrolling for large datasets
 - Column limits and swimlanes
 - Filtering and search functionality
 - Bulk actions for moving multiple cards
@@ -253,6 +271,7 @@ Potential features for future development:
 - Due date tracking
 - Assignee/owner field
 - Keyboard navigation and improved accessibility
+- Data persistence with a real backend API
 
 ## License
 
