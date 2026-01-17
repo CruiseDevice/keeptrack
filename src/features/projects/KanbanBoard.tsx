@@ -200,7 +200,7 @@ class KanbanBoard extends Component<KanbanBoardProps, KanbanBoardState> {
 
     return (
       <DragDropContext onDragEnd={this.onDragEnd}>
-        <div className="flex flex-row gap-5 overflow-x-auto p-6 min-h-[calc(100vh-200px)] bg-transparent items-start max-md:flex-col max-md:gap-3 max-md:p-3 max480:gap-2 max480:p-2">
+        <div className="flex flex-row gap-5 overflow-x-auto p-6 min-h-[calc(100vh-200px)] bg-transparent items-stretch max-md:flex-col max-md:gap-3 max-md:p-3 max480:gap-2 max480:p-2">
           {this.columns.map((column) => (
             <KanbanColumn
               key={column.status}
