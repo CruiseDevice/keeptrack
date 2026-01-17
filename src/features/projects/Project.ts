@@ -13,10 +13,11 @@ export class Project {
     description: string = '';
     imageUrl: string = '';
     contractTypeId: number | undefined;
-    contractSignedOn: Date = new Date();    
+    contractSignedOn: Date = new Date();
     budget: number = 0;
     isActive: boolean = false;
     status: ProjectStatus = 'backlog';
+    order: number = 0;
     
     constructor(initializer?: any) {
         if(!initializer) return;
@@ -31,5 +32,6 @@ export class Project {
         if(initializer.budget) this.budget = initializer.budget;
         if(initializer.isActive) this.isActive = initializer.isActive;
         if(initializer?.status) this.status = initializer.status;
+        if(initializer?.order !== undefined) this.order = initializer.order;
     }
 }
