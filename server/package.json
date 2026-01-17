@@ -1,0 +1,31 @@
+{
+  "name": "keeptrack-server",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch server.ts",
+    "start": "node --loader tsx server.ts",
+    "db:migrate": "tsx utils/migrate.ts",
+    "db:seed": "tsx utils/seed.ts",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "pg": "^8.11.3",
+    "bcrypt": "^5.1.1",
+    "jsonwebtoken": "^9.0.2",
+    "cookie-parser": "^1.4.6",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.10.0",
+    "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.5",
+    "@types/cookie-parser": "^1.4.6",
+    "tsx": "^4.7.0",
+    "vitest": "^1.0.4"
+  }
+}
