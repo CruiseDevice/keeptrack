@@ -1,5 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
-import './ErrorBoundary.css';
+import { Component, ErrorInfo, ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;
@@ -77,28 +76,32 @@ class ErrorBoundary extends Component<Props, State> {
       const { error, errorInfo } = this.state;
 
       return (
-        <div className="error-boundary">
-          <div className="error-boundary__content">
-            <div className="error-boundary__icon">⚠️</div>
-            <h1 className="error-boundary__title">Something went wrong</h1>
-            <p className="error-boundary__message">
+        <div className="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-primary to-purple-500">
+          <div className="max-w-lg w-full p-10 bg-bg-primary rounded-lg shadow-xl text-center">
+            <div className="text-6xl mb-4">⚠️</div>
+            <h1 className="text-3xl font-bold text-text-primary my-0 mb-4">Something went wrong</h1>
+            <p className="text-text-secondary leading-relaxed my-0 mb-6">
               We apologize for the inconvenience. An unexpected error has occurred.
             </p>
 
             {process.env.NODE_ENV === 'development' && error && (
-              <details className="error-boundary__details">
-                <summary className="error-boundary__summary">
+              <details className="my-6 text-left">
+                <summary className="cursor-pointer p-2.5 bg-bg-tertiary rounded-sm font-medium text-primary select-none transition-all duration-fast hover:bg-border">
                   View error details (development only)
                 </summary>
-                <div className="error-boundary__error-info">
-                  <h4>Error:</h4>
-                  <pre className="error-boundary__stack">
+                <div className="mt-4 p-4 bg-text-primary rounded-sm text-bg-secondary font-mono text-sm overflow-x-auto">
+                  <h4 className="my-0 mb-2 text-error text-xs uppercase tracking-wider">
+                    Error:
+                  </h4>
+                  <pre className="my-0 whitespace-pre-wrap break-words text-[#a6e22e]">
                     {error.toString()}
                   </pre>
                   {errorInfo && (
                     <>
-                      <h4>Component Stack:</h4>
-                      <pre className="error-boundary__stack">
+                      <h4 className="my-0 mb-2 text-error text-xs uppercase tracking-wider">
+                        Component Stack:
+                      </h4>
+                      <pre className="my-0 whitespace-pre-wrap break-words text-[#a6e22e]">
                         {errorInfo.componentStack}
                       </pre>
                     </>
@@ -107,16 +110,16 @@ class ErrorBoundary extends Component<Props, State> {
               </details>
             )}
 
-            <div className="error-boundary__actions">
+            <div className="flex gap-4 justify-center mt-6 flex-wrap">
               <button
                 onClick={this.handleReset}
-                className="error-boundary__button error-boundary__button--primary"
+                className="px-6 py-3 text-base font-medium bg-primary text-white border-none rounded-md cursor-pointer transition-all duration-fast hover:bg-primary-hover hover:-translate-y-px hover:shadow-md active:translate-y-0"
               >
                 Try Again
               </button>
               <button
                 onClick={this.handleReload}
-                className="error-boundary__button error-boundary__button--secondary"
+                className="px-6 py-3 text-base font-medium bg-bg-tertiary text-text-primary border-none rounded-md cursor-pointer transition-all duration-fast hover:bg-border active:translate-y-0"
               >
                 Reload Page
               </button>

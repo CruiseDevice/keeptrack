@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import KanbanBoard from './KanbanBoard';
 import { Project } from './Project';
 import { projectAPI } from './projectAPI';
+import LoadingSpinner from '../../shared/components/LoadingSpinner/LoadingSpinner';
 
 function ProjectsPage () {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -68,10 +69,7 @@ function ProjectsPage () {
         onSave={saveProject}/>
 
       {loading && (
-        <div className="center-page">
-          <span className="spinner primary"></span>
-          <p>Loading...</p>
-        </div>
+        <LoadingSpinner message="Loading..." />
       )}
     
     </>

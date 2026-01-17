@@ -1,6 +1,3 @@
-import React from 'react';
-import './LoadingSpinner.css';
-
 interface LoadingSpinnerProps {
   /**
    * Size variant for the spinner
@@ -20,6 +17,8 @@ interface LoadingSpinnerProps {
   fullScreen?: boolean;
 }
 
+type SizeVariant = NonNullable<LoadingSpinnerProps['size']>;
+
 /**
  * LoadingSpinner displays a loading indicator with optional message.
  * Designed for use with React.lazy and Suspense for code-split routes.
@@ -34,20 +33,40 @@ interface LoadingSpinnerProps {
  *   <ProjectsPage />
  * </Suspense>
  */
-export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
+export const LoadingSpinner = ({
   size = 'medium',
   message,
   fullScreen = false,
-}) => {
+}: LoadingSpinnerProps) => {
+  // Size variant configurations
+  const sizeClasses: Record<SizeVariant, { dot: string; message: string }> = {
+    small: {
+      dot: 'w-2 h-2',
+      message: 'text-sm',
+    },
+    medium: {
+      dot: 'w-3 h-3',
+      message: 'text-base',
+    },
+    large: {
+      dot: 'w-4 h-4',
+      message: 'text-lg',
+    },
+  };
+
+  const currentSize = sizeClasses[size];
+
   return (
-    <div className={`loading-spinner ${fullScreen ? 'loading-spinner--fullscreen' : ''}`}>
-      <div className={`loading-spinner__spinner loading-spinner__spinner--${size}`}>
-        <div className="loading-spinner__dot"></div>
-        <div className="loading-spinner__dot"></div>
-        <div className="loading-spinner__dot"></div>
+    <div className={`flex flex-col items-center justify-center p-8 w-full h-full ${
+      fullScreen ? 'fixed inset-0 bg-white/95 backdrop-blur-sm z-[1000]' : ''
+    }`}>
+      <div className="flex gap-2 items-center">
+        <div className={`loading-dot ${currentSize.dot}`} />
+        <div className={`loading-dot ${currentSize.dot}`} />
+        <div className={`loading-dot ${currentSize.dot}`} />
       </div>
       {message && (
-        <p className={`loading-spinner__message loading-spinner__message--${size}`}>
+        <p className={`mt-4 text-text-secondary font-medium text-center ${currentSize.message}`}>
           {message}
         </p>
       )}
