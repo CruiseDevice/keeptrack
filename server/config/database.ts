@@ -18,6 +18,12 @@ const pool = new Pool({
 
 export { pool };
 
+/**
+ * Helper function to execute queries
+ * Usage: query('SELECT * FROM users WHERE email = $1', ['test@example.com'])
+ */
+export const query = (text: string, params?: any[]) => pool.query(text, params);
+
 // Test the connection
 export async function testConnection() {
     try {
