@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { projectAPI } from './projectAPI';
 import { useParams } from 'react-router-dom';
 import { Project } from './Project';
 import ProjectDetail from './ProjectDetail';
+import LoadingSpinner from '../../shared/components/LoadingSpinner/LoadingSpinner';
 
 function ProjectPage() {
   const [project, setProject] = useState<Project | null>(null);
@@ -31,10 +32,7 @@ function ProjectPage() {
         <h1>Project Detail</h1>
 
         {loading && (
-          <div className="center-page">
-            <span className="spinner primary"></span>
-            <p>Loading...</p>
-          </div>
+          <LoadingSpinner message="Loading..." />
         )}
 
         {error && (

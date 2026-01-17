@@ -1,4 +1,4 @@
-import './App.css';
+import './index.tailwind.css';
 import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
 import { ErrorBoundary, LoadingSpinner } from './shared/components';
@@ -9,22 +9,29 @@ const ProjectsPage = lazy(() => import('./features/projects').then(m => ({ defau
 const ProjectPage = lazy(() => import('./features/projects').then(m => ({ default: m.ProjectPage })));
 
 function App() {
+  const getNavLinkClasses = (isActive: boolean) =>
+    `relative inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium bg-transparent border border-transparent rounded-lg no-underline transition-all duration-fast ${
+      isActive
+        ? 'text-primary bg-primary-light font-semibold after:content-[""] after:absolute after:bottom-[-1px] after:left-1/2 after:-translate-x-1/2 after:w-[60%] after:h-0.5 after:bg-primary after:rounded-t-lg'
+        : 'text-text-secondary hover:text-text-primary hover:bg-bg-tertiary'
+    } focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2`;
+
   return (
     <BrowserRouter>
-      <header className="stick">
-        <span className="logo">
-          <img src="/assets/logo-3.svg" alt="logo" width="49" height="99"/>
+      <header className="sticky top-0 z-100 h-header bg-bg-primary border-b border-border px-8 flex items-center justify-between shadow-sm transition-shadow duration-base after:content-[''] after:absolute after:bottom-[-1px] after:left-0 after:right-0 after:h-px after:bg-gradient-to-r after:from-transparent after:via-border after:to-transparent sm:px-4 sm:h-16">
+        <span className="logo flex items-center gap-3">
+          <img src="/assets/logo-3.svg" alt="logo" width="49" height="99" className="h-10 w-auto transition-transform duration-base hover:scale-105 sm:h-8"/>
         </span>
-        <nav>
-          <NavLink to="/" className="button">
+        <nav className="flex items-center gap-2">
+          <NavLink to="/" className={({ isActive }) => getNavLinkClasses(isActive)}>
             Home
           </NavLink>
-          <NavLink to="/projects" className="button">
+          <NavLink to="/projects" className={({ isActive }) => getNavLinkClasses(isActive)}>
             Projects
           </NavLink>
         </nav>
       </header>
-      <div className="container">
+      <div className="w-full p-8 sm:p-4">
         <ErrorBoundary>
           <Suspense fallback={<LoadingSpinner message="Loading..." />}>
             <Routes>

@@ -2,7 +2,6 @@ import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { DragDropContext, DropResult } from '@hello-pangea/dnd';
 import { Project, ProjectStatus } from './Project';
 import KanbanColumn from './KanbanColumn';
-import './KanbanBoard.css';
 
 interface KanbanBoardProps {
   projects: Project[];
@@ -114,15 +113,8 @@ class KanbanBoard extends Component<KanbanBoardProps, KanbanBoardState> {
     // Display error state if error boundary caught an error
     if (this.state.hasError) {
       return (
-        <div className="kanban-board-error">
-          <div className="card large error">
-            <section>
-              <p>
-                <span className="icon-alert inverse"></span>
-                {this.state.error || 'An error occurred in the Kanban board'}
-              </p>
-            </section>
-          </div>
+        <div className="p-8 text-center text-error bg-bg-primary rounded-lg border border-border">
+          <p>{this.state.error || 'An error occurred in the Kanban board'}</p>
         </div>
       );
     }
@@ -131,7 +123,7 @@ class KanbanBoard extends Component<KanbanBoardProps, KanbanBoardState> {
 
     return (
       <DragDropContext onDragEnd={this.onDragEnd}>
-        <div className="kanban-board">
+        <div className="flex flex-row gap-5 overflow-x-auto p-6 min-h-[calc(100vh-200px)] bg-transparent items-start max-md:flex-col max-md:gap-3 max-md:p-3 max480:gap-2 max480:p-2">
           {this.columns.map((column) => (
             <KanbanColumn
               key={column.status}

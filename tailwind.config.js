@@ -5,6 +5,10 @@ module.exports = {
   ],
   theme: {
     extend: {
+      screens: {
+        'max480': {'max': '480px'},
+        'max-md': {'max': '768px'},
+      },
       colors: {
         // Primary Colors
         primary: {
@@ -32,6 +36,7 @@ module.exports = {
         warning: '#f59e0b',
         error: '#ef4444',
         info: '#3b82f6',
+        purple: '#8b5cf6',
       },
       boxShadow: {
         sm: '0 1px 2px 0 rgb(0 0 0 / 0.05)',

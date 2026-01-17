@@ -1,6 +1,5 @@
 import React from 'react';
 import { Project, ProjectStatus } from './Project';
-import './KanbanBoard.css';
 
 interface ProjectDetailProps {
   project: Project;
