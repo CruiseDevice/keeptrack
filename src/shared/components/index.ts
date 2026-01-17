@@ -3,3 +3,4 @@
 
 export { default as ErrorBoundary } from './ErrorBoundary/ErrorBoundary';
 export { LoadingSpinner } from './LoadingSpinner';
+export { Modal } from './Modal';
