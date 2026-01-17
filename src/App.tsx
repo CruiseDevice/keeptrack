@@ -15,13 +15,14 @@ function App() {
         <span className="logo">
           <img src="/assets/logo-3.svg" alt="logo" width="49" height="99"/>
         </span>
-        <NavLink to="/" className="button rounded">
-          <span className="icon-"></span>
-          Home
-        </NavLink>
-        <NavLink to="/projects" className="button rounded">
-          Projects
-        </NavLink>
+        <nav>
+          <NavLink to="/" className="button">
+            Home
+          </NavLink>
+          <NavLink to="/projects" className="button">
+            Projects
+          </NavLink>
+        </nav>
       </header>
       <div className="container">
         <ErrorBoundary>
