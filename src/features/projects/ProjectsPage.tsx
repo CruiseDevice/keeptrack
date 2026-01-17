@@ -29,20 +29,23 @@ function ProjectsPage () {
   const saveProject = (project: Project, previousProject?: Project) => {
     projectAPI.put(project)
       .then((updatedProject) => {
-        let updatedProjects = projects.map((p: Project) => {
-          return p.id === project.id ? new Project(updatedProject) : p;
-        });
-        setProjects(updatedProjects);
+        // Use functional state update to avoid closure issues with multiple concurrent saves
+        setProjects((prevProjects) =>
+          prevProjects.map((p: Project) =>
+            p.id === project.id ? new Project(updatedProject) : p
+          )
+        );
       })
       .catch((e) => {
         if (e instanceof Error) {
           setError(e.message);
           // Rollback state on error for drag operations
           if (previousProject) {
-            let rolledBackProjects = projects.map((p: Project) => {
-              return p.id === project.id ? previousProject : p;
-            });
-            setProjects(rolledBackProjects);
+            setProjects((prevProjects) =>
+              prevProjects.map((p: Project) =>
+                p.id === project.id ? previousProject : p
+              )
+            );
           }
         }
       });

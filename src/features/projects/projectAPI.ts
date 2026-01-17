@@ -123,7 +123,8 @@ const projectAPI = {
     }
 
     // No cache found, fetch from API
-    return fetch(`${url}?_sort=name`)
+    // Sort by order field to preserve drag-and-drop positions within columns
+    return fetch(`${url}?_sort=order`)
       .then(checkStatus)
       .then(parseJSON)
       .then((projects) => {

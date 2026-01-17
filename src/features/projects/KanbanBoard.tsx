@@ -49,8 +49,35 @@ class KanbanBoard extends Component<KanbanBoardProps, KanbanBoardState> {
   }
 
   /**
+   * Reorders projects within a column by recalculating their order values
+   * Returns array of projects that need to be updated
+   */
+  private reorderProjectsInColumn = (
+    projectsInColumn: Project[],
+    movedProject: Project,
+    newIndex: number
+  ): Project[] => {
+    // Filter out the moved project from current position
+    const otherProjects = projectsInColumn.filter((p) => p.id !== movedProject.id);
+
+    // Insert the moved project at the new position
+    const reordered = [
+      ...otherProjects.slice(0, newIndex),
+      movedProject,
+      ...otherProjects.slice(newIndex),
+    ];
+
+    // Assign new order values to all projects in the column
+    return reordered.map((project, index) => ({
+      ...project,
+      order: index,
+    }));
+  };
+
+  /**
    * Handle drag end events from the drag-and-drop context
    * This implements optimistic updates with rollback support
+   * Tracks position within columns using the order field
    */
   onDragEnd = (result: DropResult): void => {
     const { destination, source, draggableId } = result;
@@ -76,20 +103,65 @@ class KanbanBoard extends Component<KanbanBoardProps, KanbanBoardState> {
       return;
     }
 
-    // Create updated project with new status using spread operator
-    // This ensures all fields are preserved (critical for json-server)
-    const updatedProject: Project = {
-      ...project,
-      status: destination.droppableId as ProjectStatus,
-    };
+    const sourceStatus = source.droppableId as ProjectStatus;
+    const destStatus = destination.droppableId as ProjectStatus;
 
-    // Optimistic update - call onSave with both updated and previous project
-    // The ProjectsPage's saveProject will handle the API call and rollback on error
-    this.props.onSave(updatedProject, project);
+    // Get projects in the relevant column(s)
+    const sourceColumnProjects = this.props.projects.filter(
+      (p) => p.status === sourceStatus
+    );
+    const destColumnProjects = this.props.projects.filter(
+      (p) => p.status === destStatus
+    );
+
+    const projectsToUpdate: Project[] = [];
+
+    if (sourceStatus === destStatus) {
+      // Moving within the same column - reorder all projects in that column
+      const updatedProjects = this.reorderProjectsInColumn(
+        sourceColumnProjects,
+        project,
+        destination.index
+      );
+      projectsToUpdate.push(...updatedProjects);
+    } else {
+      // Moving across columns - update both columns
+      // 1. Remove from source column and reorder remaining
+      const sourceWithoutMoved = sourceColumnProjects.filter(
+        (p) => p.id !== project.id
+      );
+      const updatedSource = sourceWithoutMoved.map((p, i) => ({ ...p, order: i }));
+      projectsToUpdate.push(...updatedSource);
+
+      // 2. Add to destination column at the new position
+      const destWithoutMoved = destColumnProjects.filter(
+        (p) => p.id !== project.id
+      );
+      const movedWithNewStatus = {
+        ...project,
+        status: destStatus,
+      };
+      const updatedDest = this.reorderProjectsInColumn(
+        destWithoutMoved,
+        movedWithNewStatus,
+        destination.index
+      );
+      projectsToUpdate.push(...updatedDest);
+    }
+
+    // Save all affected projects (optimistic update with rollback)
+    const previousProjects = new Map(
+      projectsToUpdate.map((p) => [p.id, this.props.projects.find((orig) => orig.id === p.id)])
+    );
+
+    projectsToUpdate.forEach((updatedProject) => {
+      const previousProject = previousProjects.get(updatedProject.id);
+      this.props.onSave(updatedProject, previousProject);
+    });
   };
 
   /**
-   * Group projects by their status
+   * Group projects by their status and sort by order within each status
    */
   getProjectsByStatus = (): Map<ProjectStatus, Project[]> => {
     const projectsByStatus = new Map<ProjectStatus, Project[]>();
@@ -104,6 +176,11 @@ class KanbanBoard extends Component<KanbanBoardProps, KanbanBoardState> {
       const statusProjects = projectsByStatus.get(project.status) || [];
       statusProjects.push(project);
       projectsByStatus.set(project.status, statusProjects);
+    });
+
+    // Sort projects by order within each status column
+    projectsByStatus.forEach((projects) => {
+      projects.sort((a, b) => a.order - b.order);
     });
 
     return projectsByStatus;
