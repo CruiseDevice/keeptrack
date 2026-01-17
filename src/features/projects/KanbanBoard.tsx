@@ -2,6 +2,8 @@ import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { DragDropContext, DropResult } from '@hello-pangea/dnd';
 import { Project, ProjectStatus } from './Project';
 import KanbanColumn from './KanbanColumn';
+import { Modal } from '../../shared/components';
+import ProjectForm from './ProjectForm';
 
 interface KanbanBoardProps {
   projects: Project[];
@@ -11,6 +13,7 @@ interface KanbanBoardProps {
 interface KanbanBoardState {
   hasError: boolean;
   error: string | null;
+  editingProject: Project | null;
 }
 
 /**
@@ -25,6 +28,7 @@ class KanbanBoard extends Component<KanbanBoardProps, KanbanBoardState> {
   state: KanbanBoardState = {
     hasError: false,
     error: null,
+    editingProject: null,
   };
 
   // Column definitions with titles and corresponding status values
@@ -41,7 +45,7 @@ class KanbanBoard extends Component<KanbanBoardProps, KanbanBoardState> {
    * Error boundary to catch and display errors in the Kanban board
    */
   static getDerivedStateFromError(error: Error): KanbanBoardState {
-    return { hasError: true, error: error.message };
+    return { hasError: true, error: error.message, editingProject: null };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
@@ -163,6 +167,32 @@ class KanbanBoard extends Component<KanbanBoardProps, KanbanBoardState> {
   /**
    * Group projects by their status and sort by order within each status
    */
+  /**
+   * Open the edit modal for a specific project
+   */
+  openEditModal = (project: Project): void => {
+    this.setState({ editingProject: project });
+  };
+
+  /**
+   * Close the edit modal
+   */
+  closeEditModal = (): void => {
+    this.setState({ editingProject: null });
+  };
+
+  /**
+   * Handle save from the modal form
+   */
+  handleModalSave = (project: Project): void => {
+    const previousProject = this.props.projects.find((p) => p.id === project.id);
+    this.props.onSave(project, previousProject);
+    this.closeEditModal();
+  };
+
+  /**
+   * Group projects by their status and sort by order within each status
+   */
   getProjectsByStatus = (): Map<ProjectStatus, Project[]> => {
     const projectsByStatus = new Map<ProjectStatus, Project[]>();
 
@@ -199,23 +229,36 @@ class KanbanBoard extends Component<KanbanBoardProps, KanbanBoardState> {
     const projectsByStatus = this.getProjectsByStatus();
 
     return (
-      <DragDropContext onDragEnd={this.onDragEnd}>
-        <div className="flex flex-row gap-5 overflow-x-auto p-6 min-h-[calc(100vh-200px)] bg-transparent items-stretch max-md:flex-col max-md:gap-3 max-md:p-3 max480:gap-2 max480:p-2">
-          {this.columns.map((column) => (
-            <KanbanColumn
-              key={column.status}
-              title={column.title}
-              status={column.status}
-              projects={projectsByStatus.get(column.status) || []}
-              onEdit={(project) => {
-                // Navigate to project edit page
-                // This will be handled by the parent component or routing
-                window.location.href = `/projects/${project.id}`;
-              }}
+      <>
+        <DragDropContext onDragEnd={this.onDragEnd}>
+          <div className="flex flex-row gap-5 overflow-x-auto p-6 min-h-[calc(100vh-200px)] bg-transparent items-stretch max-md:flex-col max-md:gap-3 max-md:p-3 max480:gap-2 max480:p-2">
+            {this.columns.map((column) => (
+              <KanbanColumn
+                key={column.status}
+                title={column.title}
+                status={column.status}
+                projects={projectsByStatus.get(column.status) || []}
+                onEdit={this.openEditModal}
+              />
+            ))}
+          </div>
+        </DragDropContext>
+
+        <Modal
+          isOpen={this.state.editingProject !== null}
+          onClose={this.closeEditModal}
+          title="Edit Project"
+          size="medium"
+        >
+          {this.state.editingProject && (
+            <ProjectForm
+              project={this.state.editingProject}
+              onSave={this.handleModalSave}
+              onCancel={this.closeEditModal}
             />
-          ))}
-        </div>
-      </DragDropContext>
+          )}
+        </Modal>
+      </>
     );
   }
 }
