@@ -10,10 +10,19 @@ import { createOptimisticUpdateFromConstructor } from "../../shared/utils/optimi
 import { HttpErrorInfo } from "../../shared/types";
 
 // Use environment variable with fallback to localhost for development
-const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:4000';
-const url = `${baseUrl}/projects`;
+// New Express backend runs on port 3001 with /api prefix
+const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3001';
+const url = `${baseUrl}/api/projects`;
 const LOCAL_STORAGE_KEY = 'keeptrack_projects';
 const SEED_DATA_KEY = 'keeptrack_seeded';
+
+// Fetch options for authenticated requests (includes JWT cookies)
+const fetchOptions: RequestInit = {
+  credentials: 'include',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+};
 
 
 function translateStatusToErrorMessage(status: number) {
@@ -123,13 +132,15 @@ const projectAPI = {
     }
 
     // No cache found, fetch from API
-    // Sort by order field to preserve drag-and-drop positions within columns
-    return fetch(`${url}?_sort=order`)
+    // Note: New Express backend returns { projects: [...] } wrapper
+    return fetch(url, fetchOptions)
       .then(checkStatus)
       .then(parseJSON)
-      .then((projects) => {
-        // Seed localStorage on first successful fetch
+      .then((data) => {
+        // New backend wraps response in { projects: [...] }
+        const projects = data.projects || data;
         const projectModels = convertToProjectModels(projects);
+        // Seed localStorage on first successful fetch
         if (!isSeeded()) {
           saveToLocalStorage(projectModels);
           markAsSeeded();
@@ -186,11 +197,9 @@ const projectAPI = {
     });
 
     return fetch(`${url}/${project.id}`, {
+      ...fetchOptions,
       method: 'PUT',
       body: projectBody,
-      headers: {
-        'Content-Type': 'application/json'
-      }
     }).then(checkStatus)
       .then(parseJSON)
       .catch((error: TypeError) => {
@@ -202,10 +211,14 @@ const projectAPI = {
   },
 
   find(id: number) {
-    return fetch(`${url}/${id}`)
+    return fetch(`${url}/${id}`, fetchOptions)
       .then(checkStatus)
       .then(parseJSON)
-      .then(convertToProjectModel);
+      .then((data) => {
+        // New backend wraps response in { project: {...} }
+        const project = data.project || data;
+        return convertToProjectModel(project);
+      });
   },
 }
 
