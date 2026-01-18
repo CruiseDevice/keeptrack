@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch server.ts",
-    "start": "node --loader tsx server.ts",
+    "start": "tsx server.ts",
     "db:migrate": "tsx utils/migrate.ts",
     "db:seed": "tsx utils/seed.ts",
     "test": "vitest"
